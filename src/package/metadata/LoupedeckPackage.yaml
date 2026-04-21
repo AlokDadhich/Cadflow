@@ -1,0 +1,26 @@
+type: plugin4
+
+name: CadFlow
+displayName: CADFlow
+description: AutoCAD middleware for MX Creative Console. Roller = X axis nudge, Scroller = Y axis nudge. Auto-activates when AutoCAD is open.
+
+pluginFileName: CadFlow.dll
+
+version: 2.0
+
+author: alokd
+copyright: Copyright © 2026 alokd. All rights reserved.
+
+pluginFolderMac: bin
+
+supportedDevices:
+    - LoupedeckCtFamily
+
+pluginCapabilities:
+    - HasApplication
+    - ActivatesApplication
+
+minimumLoupedeckVersion: 6.0
+
+license: MIT
+licenseUrl: https://opensource.org/licenses/MIT
