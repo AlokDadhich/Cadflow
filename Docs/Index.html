@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CadFlow — Plugin Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Base ─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #080c10;
+  --bg2:       #0d1219;
+  --bg3:       #111820;
+  --bg4:       #161e28;
+  --border:    #1e2d3d;
+  --border2:   #243344;
+  --teal:      #00d4ff;
+  --teal2:     #00a8cc;
+  --teal3:     #006f88;
+  --cyan:      #7ee8fa;
+  --gold:      #f0c040;
+  --gold2:     #c89820;
+  --green:     #3ddc84;
+  --purple:    #b388ff;
+  --red:       #ff6b6b;
+  --txt:       #e2eaf4;
+  --txt2:      #8fa8c0;
+  --txt3:      #4a6478;
+  --mono:      'Space Mono', monospace;
+  --display:   'Syne', sans-serif;
+  --body:      'DM Sans', sans-serif;
+  --radius:    6px;
+  --radius2:   12px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--txt);
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+
+/* ── Scrollbar ────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--teal3); border-radius: 3px; }
+
+/* ── Grid noise overlay ───────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.015) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Layout ───────────────────────────────────────────────── */
+.wrapper { max-width: 1160px; margin: 0 auto; padding: 0 32px; position: relative; z-index: 1; }
+
+/* ── NAV ──────────────────────────────────────────────────── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(8,12,16,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+}
+.nav-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+}
+.nav-logo {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--teal);
+  letter-spacing: -0.5px;
+  text-decoration: none;
+}
+.nav-logo span { color: var(--txt2); font-weight: 400; }
+.nav-links {
+  display: flex;
+  gap: 6px;
+  list-style: none;
+}
+.nav-links a {
+  color: var(--txt2);
+  text-decoration: none;
+  font-size: 12px;
+  font-family: var(--mono);
+  padding: 5px 10px;
+  border-radius: var(--radius);
+  transition: color 0.2s, background 0.2s;
+  letter-spacing: 0.3px;
+}
+.nav-links a:hover { color: var(--teal); background: rgba(0,212,255,0.06); }
+.nav-badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--bg);
+  background: var(--teal);
+  padding: 3px 8px;
+  border-radius: 99px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* ── HERO ─────────────────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 32px 60px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,212,255,0.07) 0%, transparent 70%);
+  top: -100px;
+  right: -100px;
+  pointer-events: none;
+}
+.hero-glow2 {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(179,136,255,0.05) 0%, transparent 70%);
+  bottom: 0;
+  left: -80px;
+  pointer-events: none;
+}
+.hero-inner { max-width: 1160px; margin: 0 auto; width: 100%; }
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--teal);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hero-eyebrow::before {
+  content: '';
+  width: 32px;
+  height: 1px;
+  background: var(--teal);
+  display: block;
+}
+.hero-title {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(56px, 8vw, 96px);
+  line-height: 0.95;
+  letter-spacing: -3px;
+  color: var(--txt);
+  margin-bottom: 8px;
+}
+.hero-title .accent { color: var(--teal); }
+.hero-subtitle {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(16px, 2.5vw, 24px);
+  color: var(--txt2);
+  margin-bottom: 40px;
+  letter-spacing: -0.3px;
+}
+.hero-desc {
+  max-width: 560px;
+  color: var(--txt2);
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 48px;
+}
+.hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 56px;
+}
+.tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  padding: 5px 12px;
+  border-radius: 99px;
+  border: 1px solid var(--border2);
+  color: var(--txt2);
+  background: var(--bg2);
+  transition: border-color 0.2s, color 0.2s;
+}
+.tag:hover { border-color: var(--teal3); color: var(--teal); }
+.tag.teal { border-color: var(--teal3); color: var(--teal); background: rgba(0,212,255,0.05); }
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius2);
+  overflow: hidden;
+  max-width: 700px;
+}
+.stat {
+  background: var(--bg2);
+  padding: 20px 24px;
+  transition: background 0.2s;
+}
+.stat:hover { background: var(--bg3); }
+.stat-val {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 28px;
+  color: var(--teal);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.stat-lbl {
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--txt3);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ── SECTION COMMONS ──────────────────────────────────────── */
+section { padding: 80px 32px; }
+.section-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+  max-width: 120px;
+}
+.section-title {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(28px, 4vw, 42px);
+  letter-spacing: -1.5px;
+  color: var(--txt);
+  margin-bottom: 16px;
+  line-height: 1.05;
+}
+.section-sub {
+  color: var(--txt2);
+  font-size: 16px;
+  max-width: 560px;
+  margin-bottom: 48px;
+  line-height: 1.6;
+}
+
+/* ── CARDS ────────────────────────────────────────────────── */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius2);
+  padding: 24px;
+  transition: border-color 0.2s, transform 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 2px;
+  background: transparent;
+  transition: background 0.3s;
+}
+.card:hover::before { background: linear-gradient(90deg, var(--teal), transparent); }
+
+/* ── ARCHITECTURE SECTION ─────────────────────────────────── */
+#architecture { background: var(--bg); }
+.pipeline {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius2);
+  overflow: hidden;
+  margin-bottom: 40px;
+}
+.pipe-step {
+  background: var(--bg2);
+  padding: 24px 16px;
+  text-align: center;
+  position: relative;
+  border-right: 1px solid var(--border);
+  transition: background 0.2s;
+}
+.pipe-step:last-child { border-right: none; }
+.pipe-step:hover { background: var(--bg3); }
+.pipe-arrow {
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  color: var(--txt3);
+  z-index: 2;
+}
+.pipe-step:last-child .pipe-arrow { display: none; }
+.pipe-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--teal);
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+.pipe-name {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--txt);
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+.pipe-sub {
+  font-size: 11px;
+  color: var(--txt3);
+  font-family: var(--mono);
+}
+.pipe-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  margin: 0 auto 12px;
+}
+
+.layers-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+.layer-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius2);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.layer-num {
+  font-family: var(--mono);
+  font-size: 48px;
+  font-weight: 700;
+  position: absolute;
+  top: -8px;
+  right: 16px;
+  color: var(--border2);
+  line-height: 1;
+  pointer-events: none;
+}
+.layer-title {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+.layer-bullets {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 14px;
+}
+.layer-bullets li {
+  font-size: 12.5px;
+  color: var(--txt2);
+  padding-left: 14px;
+  position: relative;
+  line-height: 1.4;
+}
+.layer-bullets li::before {
+  content: '›';
+  position: absolute;
+  left: 0;
+  color: var(--teal3);
+  font-family: var(--mono);
+}
+
+/* ── INFRASTRUCTURE SECTION ───────────────────────────────── */
+#infrastructure { background: var(--bg2); }
+.class-grid { display: flex; flex-direction: column; gap: 16px; }
+.class-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius2);
+  display: grid;
+  grid-template-columns: 240px 1fr auto;
+  gap: 0;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.class-card:hover { border-color: var(--border2); }
+.class-left {
+  padding: 24px;
+  border-right: 1px solid var(--border);
+  background: var(--bg2);
+}
+.class-name {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+.class-file {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--txt3);
+  margin-bottom: 14px;
+}
+.class-badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9px;
+  padding: 3px 8px;
+  border-radius: 99px;
+  border: 1px solid;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.class-body { padding: 24px; }
+.class-desc { font-size: 13.5px; color: var(--txt2); line-height: 1.6; margin-bottom: 14px; }
+.class-props {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.prop {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--txt3);
+  padding: 4px 10px;
+  background: var(--bg3);
+  border-radius: 4px;
+  display: flex;
+  gap: 8px;
+}
+.prop-key { color: var(--txt2); }
+.prop-val { color: var(--cyan); }
+
+/* ── ACADSEND SECTION ─────────────────────────────────────── */
+#acadsend { background: var(--bg); }
+.flow-steps {
+  display: flex;
+  gap: 0;
+  margin-bottom: 40px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius2);
+  overflow: hidden;
+}
+.flow-step {
+  flex: 1;
+  padding: 20px 14px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  text-align: center;
+  position: relative;
+}
+.flow-step:last-child { border-right: none; }
+.flow-step-n {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  margin: 0 auto 10px;
+  color: var(--bg);
+}
+.flow-step-name {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--txt);
+  margin-bottom: 4px;
+}
+.flow-step-sub { font-size: 10px; color: var(--txt3); font-family: var(--mono); }
+
+.api-table { width: 100%; border-collapse: collapse; }
+.api-table thead tr { border-bottom: 1px solid var(--border2); }
+.api-table th {
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--txt3);
+  padding: 10px 16px;
+}
+.api-table td {
+  padding: 12px 16px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.api-table tr:last-child td { border-bottom: none; }
+.api-table tr:hover td { background: var(--bg3); }
+.api-type {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 99px;
+  border: 1px solid;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+}
+.api-sig { font-family: var(--mono); font-size: 12px; color: var(--txt); }
+.api-desc { color: var(--txt2); font-size: 13px; }
+
+code {
+  font-family: var(--mono);
+  font-size: 12px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 2px 7px;
+  border-radius: 4px;
+  color: var(--cyan);
+}
+
+/* ── NUDGE ENGINE SECTION ─────────────────────────────────── */
+#nudge { background: var(--bg2); }
+.nudge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+.formula-box {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius2);
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.formula-box::after {
+  content: 'ƒ(x)';
+  position: absolute;
+  bottom: -10px;
+  right: 20px;
+  font-family: var(--mono);
+  font-size: 72px;
+  color: var(--border);
+  pointer-events: none;
+  line-height: 1;
+}
+.formula-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--teal);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.formula-eq {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--txt);
+  background: var(--bg3);
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+  line-height: 1.7;
+}
+.const-row {
+  display: grid;
+  grid-template-columns: 110px 60px 1fr;
+  gap: 10px;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.const-row:last-child { border-bottom: none; }
+.const-name { font-family: var(--mono); color: var(--gold); font-size: 11px; }
+.const-val { font-family: var(--mono); color: var(--cyan); font-size: 11px; }
+.const-desc { color: var(--txt3); font-size: 11px; }
+
+.model-box {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius2);
+  padding: 28px;
+}
+.model-label { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; color: var(--purple); text-transform: uppercase; margin-bottom: 16px; }
+.model-steps { display: flex; flex-direction: column; gap: 8px; }
+.model-step {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 12.5px;
+  color: var(--txt2);
+  padding: 8px 12px;
+  background: var(--bg3);
+  border-radius: var(--radius);
+  border-left: 2px solid var(--purple);
+}
+.model-step-n { font-family: var(--mono); color: var(--purple); font-size: 11px; min-width: 18px; margin-top: 1px; }
+
+/* ── ACTION SYSTEM ────────────────────────────────────────── */
+#actions { background: var(--bg); }
+.actions-layout { display: grid; grid-template-columns: 320px 1fr; gap: 32px; }
+.grid-vis { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; }
+.grid-tile {
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  border: 1px solid;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8px 4px;
+  position: relative;
+  transition: transform 0.15s;
+  cursor: default;
+}
+.grid-tile:hover { transform: scale(1.04); }
+.tile-num {
+  font-family: var(--mono);
+  font-size: 9px;
+  position: absolute;
+  top: 5px;
+  left: 6px;
+  opacity: 0.7;
+}
+.tile-label { font-size: 10px; font-weight: 500; line-height: 1.2; }
+.grid-legend { margin-top: 16px; display: flex; flex-direction: column; gap: 7px; }
+.legend-row { display: flex; gap: 10px; align-items: center; font-size: 12px; color: var(--txt2); }
+.legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+.tool-groups { display: flex; flex-direction: column; gap: 12px; }
+.tool-group {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius2);
+  padding: 18px 20px;
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 16px;
+  align-items: start;
+  transition: border-color 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.tool-group::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+}
+.tool-group:hover { border-color: var(--border2); }
+.tg-name { font-family: var(--display); font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+.tg-count { font-family: var(--mono); font-size: 10px; color: var(--txt3); }
+.tg-tools { font-size: 12.5px; color: var(--txt2); margin-bottom: 6px; line-height: 1.5; }
+.tg-desc { font-size: 11.5px; color: var(--txt3); font-style: italic; }
+
+/* ── QUICK RING & GLOBALS ─────────────────────────────────── */
+#globals { background: var(--bg2); }
+.globals-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.ring-list { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+.ring-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color 0.2s;
+}
+.ring-item:hover { border-color: var(--teal3); }
+.ring-name { font-size: 13px; color: var(--txt); font-weight: 500; }
+.ring-cmd { font-family: var(--mono); font-size: 10px; color: var(--teal); }
+
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+}
+.shortcut-row:last-child { border-bottom: none; }
+.shortcut-sys { font-family: var(--mono); font-size: 11px; }
+.kbd {
+  font-family: var(--mono);
+  font-size: 10px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-bottom-width: 2px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  color: var(--txt);
+  white-space: nowrap;
+}
+
+.undo-card { text-align: center; padding: 28px 20px; }
+.undo-key {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 48px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.undo-shortcut { font-family: var(--mono); font-size: 13px; }
+
+/* ── PACKAGE ──────────────────────────────────────────────── */
+#package { background: var(--bg); }
+.package-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+.yaml-table { width: 100%; border-collapse: collapse; }
+.yaml-table td { padding: 9px 14px; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+.yaml-table tr:last-child td { border-bottom: none; }
+.yaml-key { font-family: var(--mono); color: var(--teal); font-size: 11px; }
+.yaml-val { font-family: var(--mono); color: var(--txt); font-size: 11px; }
+
+.icon-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+.icon-cell {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 4px;
+  text-align: center;
+  font-size: 10px;
+  color: var(--txt3);
+  font-family: var(--mono);
+  transition: border-color 0.2s, color 0.2s;
+}
+.icon-cell:hover { border-color: var(--border2); color: var(--txt2); }
+
+.build-pipeline { display: flex; gap: 0; border: 1px solid var(--border); border-radius: var(--radius2); overflow: hidden; }
+.build-step {
+  flex: 1;
+  border-right: 1px solid var(--border);
+  padding: 20px 16px;
+  background: var(--bg2);
+  transition: background 0.2s;
+}
+.build-step:last-child { border-right: none; }
+.build-step:hover { background: var(--bg3); }
+.build-n {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 28px;
+  color: var(--border2);
+  line-height: 1;
+  margin-bottom: 10px;
+}
+.build-title { font-family: var(--display); font-weight: 700; font-size: 13px; color: var(--txt); margin-bottom: 4px; }
+.build-sub { font-size: 11px; color: var(--txt3); font-family: var(--mono); }
+
+/* ── GLOSSARY ─────────────────────────────────────────────── */
+#glossary { background: var(--bg2); }
+.glossary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.gloss-item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 16px;
+  align-items: start;
+  transition: border-color 0.2s;
+}
+.gloss-item:hover { border-color: var(--border2); }
+.gloss-term { font-family: var(--mono); font-size: 11px; color: var(--teal); font-weight: 700; line-height: 1.4; }
+.gloss-def { font-size: 12px; color: var(--txt2); line-height: 1.5; }
+
+/* ── FOOTER ───────────────────────────────────────────────── */
+footer {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 48px 32px;
+  text-align: center;
+}
+.footer-inner { max-width: 1160px; margin: 0 auto; }
+.footer-logo { font-family: var(--display); font-weight: 800; font-size: 32px; color: var(--teal); letter-spacing: -1px; margin-bottom: 12px; }
+.footer-sub { font-size: 13px; color: var(--txt3); font-family: var(--mono); margin-bottom: 24px; }
+.footer-link { color: var(--teal2); text-decoration: none; font-family: var(--mono); font-size: 12px; letter-spacing: 0.5px; }
+.footer-link:hover { color: var(--teal); }
+.footer-tags { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+
+/* ── ANIMATIONS ───────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-eyebrow  { animation: fadeUp 0.5s ease both; animation-delay: 0.1s; }
+.hero-title    { animation: fadeUp 0.5s ease both; animation-delay: 0.2s; }
+.hero-subtitle { animation: fadeUp 0.5s ease both; animation-delay: 0.3s; }
+.hero-desc     { animation: fadeUp 0.5s ease both; animation-delay: 0.4s; }
+.hero-tags     { animation: fadeUp 0.5s ease both; animation-delay: 0.5s; }
+.hero-stats    { animation: fadeUp 0.5s ease both; animation-delay: 0.6s; }
+
+/* ── COLOR UTILITIES ──────────────────────────────────────── */
+.c-teal   { color: var(--teal); }
+.c-cyan   { color: var(--cyan); }
+.c-gold   { color: var(--gold); }
+.c-green  { color: var(--green); }
+.c-purple { color: var(--purple); }
+.c-red    { color: var(--red); }
+.c-txt2   { color: var(--txt2); }
+.bg-teal  { background: rgba(0,212,255,0.08); border-color: var(--teal3) !important; }
+.bg-gold  { background: rgba(240,192,64,0.06); border-color: var(--gold2) !important; }
+.bg-green { background: rgba(61,220,132,0.06); border-color: #1e5c38 !important; }
+.bg-purple{ background: rgba(179,136,255,0.06); border-color: #5a3a88 !important; }
+.bg-red   { background: rgba(255,107,107,0.06); border-color: #7a2020 !important; }
+
+/* ── RESPONSIVE ───────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .hero-stats { grid-template-columns: 1fr 1fr; }
+  .pipeline { grid-template-columns: 1fr 1fr 1fr; }
+  .layers-grid { grid-template-columns: 1fr; }
+  .class-card { grid-template-columns: 1fr; }
+  .actions-layout { grid-template-columns: 1fr; }
+  .globals-grid { grid-template-columns: 1fr; }
+  .package-grid { grid-template-columns: 1fr; }
+  .glossary-grid { grid-template-columns: 1fr; }
+  .build-pipeline { flex-direction: column; }
+  .flow-steps { flex-direction: column; }
+  .nudge-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .nav-links { display: none; }
+  .hero-stats { grid-template-columns: 1fr 1fr; }
+  .pipeline { grid-template-columns: 1fr 1fr; }
+  .icon-grid { grid-template-columns: repeat(4, 1fr); }
+  .gloss-item { grid-template-columns: 1fr; gap: 6px; }
+  .tool-group { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ───────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">CadFlow <span>/ docs</span></a>
+    <ul class="nav-links">
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#infrastructure">Infrastructure</a></li>
+      <li><a href="#acadsend">IPC Bridge</a></li>
+      <li><a href="#nudge">NudgeEngine</a></li>
+      <li><a href="#actions">Actions</a></li>
+      <li><a href="#globals">Globals</a></li>
+      <li><a href="#package">Package</a></li>
+      <li><a href="#glossary">Glossary</a></li>
+    </ul>
+    <span class="nav-badge">v11</span>
+  </div>
+</nav>
+
+<!-- ── HERO ──────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Loupedeck Plugin Documentation</div>
+    <h1 class="hero-title"><span class="accent">Cad</span>Flow</h1>
+    <p class="hero-subtitle">Hardware-driven AutoCAD workflow for macOS</p>
+    <p class="hero-desc">
+      A middleware plugin that bridges the <strong style="color:var(--txt)">Loupedeck console</strong> with
+      <strong style="color:var(--txt)">AutoCAD 2027 on macOS</strong> — replacing keyboard-heavy command
+      entry with tactile buttons, rotary encoder panning, and a structured 60+ command hierarchy.
+    </p>
+    <div class="hero-tags">
+      <span class="tag teal">macOS (Apple Silicon)</span>
+      <span class="tag teal">.NET 8</span>
+      <span class="tag teal">C#</span>
+      <span class="tag">Loupedeck SDK</span>
+      <span class="tag">AutoCAD 2027</span>
+      <span class="tag">AppleScript IPC</span>
+      <span class="tag">osascript</span>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-val">60+</div>
+        <div class="stat-lbl">CAD Operations</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">8</div>
+        <div class="stat-lbl">Slots per Tool</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">3</div>
+        <div class="stat-lbl">AppleScript modes</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">3ms</div>
+        <div class="stat-lbl">Nudge idle reset</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ARCHITECTURE ───────────────────────────────────────── -->
+<section id="architecture">
+  <div class="wrapper">
+    <div class="section-label">01 — System Design</div>
+    <h2 class="section-title">Three-Layer Architecture</h2>
+    <p class="section-sub">Physical input travels through three distinct layers before reaching AutoCAD — from Loupedeck hardware events down to osascript execution.</p>
+
+    <div class="pipeline">
+      <div class="pipe-step">
+        <div class="pipe-arrow">›</div>
+        <div class="pipe-dot" style="background:var(--teal)"></div>
+        <div class="pipe-num">01</div>
+        <div class="pipe-name">Loupedeck Hardware</div>
+        <div class="pipe-sub">Button / Encoder</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-arrow">›</div>
+        <div class="pipe-dot" style="background:var(--cyan)"></div>
+        <div class="pipe-num">02</div>
+        <div class="pipe-name">CadFlowPlugin &amp; App</div>
+        <div class="pipe-sub">Entry &amp; Lifecycle</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-arrow">›</div>
+        <div class="pipe-dot" style="background:var(--purple)"></div>
+        <div class="pipe-num">03</div>
+        <div class="pipe-name">Action System</div>
+        <div class="pipe-sub">CadToolFolder / Icons</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-arrow">›</div>
+        <div class="pipe-dot" style="background:var(--gold)"></div>
+        <div class="pipe-num">04</div>
+        <div class="pipe-name">AcadSend Bridge</div>
+        <div class="pipe-sub">AppleScript Builder</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-dot" style="background:var(--green)"></div>
+        <div class="pipe-num">05</div>
+        <div class="pipe-name">AutoCAD 2027</div>
+        <div class="pipe-sub">osascript execution</div>
+      </div>
+    </div>
+
+    <div class="layers-grid">
+      <div class="layer-card bg-teal">
+        <div class="layer-num c-teal" style="opacity:0.15">1</div>
+        <div class="layer-title c-teal">Plugin Entry &amp; Lifecycle</div>
+        <div style="font-size:12px;color:var(--txt2)">Registers the assembly with the Loupedeck service. Detects when AutoCAD is the frontmost application.</div>
+        <ul class="layer-bullets">
+          <li><code>CadFlowPlugin</code> bootstraps logging &amp; resources</li>
+          <li><code>CadFlowApplication</code> watches bundle ID <code>com.autodesk.autocad2027</code></li>
+          <li>Auto-activates CadFlow profile on focus</li>
+          <li><code>PluginLog</code> and <code>PluginResources</code> helpers</li>
+        </ul>
+      </div>
+      <div class="layer-card bg-purple">
+        <div class="layer-num c-purple" style="opacity:0.15">2</div>
+        <div class="layer-title c-purple">Action &amp; Adjustment Handlers</div>
+        <div style="font-size:12px;color:var(--txt2)">Manages the stateful device UI — folders, button grids, and dials — and translates user intent into CAD commands.</div>
+        <ul class="layer-bullets">
+          <li>Hierarchical <code>CadToolFolder</code> groups</li>
+          <li>8-slot CtxBtn grid per active tool</li>
+          <li><code>ToolContext</code> state machine tracks active folder</li>
+          <li>Procedural <code>BitmapBuilder</code> pixel-art icons</li>
+        </ul>
+      </div>
+      <div class="layer-card bg-gold">
+        <div class="layer-num c-gold" style="opacity:0.15">3</div>
+        <div class="layer-title c-gold">IPC Bridge — AcadSend</div>
+        <div style="font-size:12px;color:var(--txt2)">Low-level execution engine. Generates AppleScript strings dynamically and fires them via <code>/usr/bin/osascript</code>.</div>
+        <ul class="layer-bullets">
+          <li>Blocking <code>Send()</code> for tool buttons (3000ms timeout)</li>
+          <li>Non-blocking <code>SendAsync()</code> for encoder input</li>
+          <li>Three script templates: Keystroke, KeyCode, Shortcut</li>
+          <li>Writes <code>.scpt</code> temp file, executes, cleans up</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── INFRASTRUCTURE ─────────────────────────────────────── -->
+<section id="infrastructure">
+  <div class="wrapper">
+    <div class="section-label">02 — Core Classes</div>
+    <h2 class="section-title">Plugin Infrastructure</h2>
+    <p class="section-sub">The three foundational classes that bootstrap and manage the plugin's lifecycle, application detection, and tool state.</p>
+
+    <div class="class-grid">
+
+      <div class="class-card">
+        <div class="class-left">
+          <div class="class-name c-teal">CadFlowPlugin</div>
+          <div class="class-file">src/CadFlowPlugin.cs</div>
+          <span class="class-badge c-teal" style="border-color:var(--teal3)">Entry Point</span>
+        </div>
+        <div class="class-body">
+          <div class="class-desc">Primary entry point. Inherits the Loupedeck SDK <code>Plugin</code> base class. Registers the assembly with the service and initialises shared utilities in its constructor.</div>
+          <div class="class-props">
+            <div class="prop"><span class="prop-key">UsesApplicationApiOnly</span><span class="prop-val">→ false</span></div>
+            <div class="prop"><span class="prop-key">HasNoApplication</span><span class="prop-val">→ false</span></div>
+            <div class="prop"><span class="prop-key">Load() / Unload()</span><span class="prop-val">→ lifecycle hooks</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="class-card">
+        <div class="class-left">
+          <div class="class-name c-cyan">CadFlowApplication</div>
+          <div class="class-file">src/CadFlowApplication.cs</div>
+          <span class="class-badge c-cyan" style="border-color:#1a6070">App Detection</span>
+        </div>
+        <div class="class-body">
+          <div class="class-desc">Inherits <code>ClientApplication</code>. Provides application-specific awareness so the Loupedeck service can automatically switch to the CadFlow profile when AutoCAD becomes the frontmost window.</div>
+          <div class="class-props">
+            <div class="prop"><span class="prop-key">GetBundleName()</span><span class="prop-val">→ com.autodesk.autocad2027</span></div>
+            <div class="prop"><span class="prop-key">GetProcessName()</span><span class="prop-val">→ ""</span></div>
+            <div class="prop"><span class="prop-key">GetApplicationStatus()</span><span class="prop-val">→ Unknown</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="class-card">
+        <div class="class-left">
+          <div class="class-name c-gold">ToolContext</div>
+          <div class="class-file">src/Context/ToolContext.cs</div>
+          <span class="class-badge c-gold" style="border-color:var(--gold2)">State Machine</span>
+        </div>
+        <div class="class-body">
+          <div class="class-desc">Static state machine. Tracks which <code>CadToolFolder</code> is currently open on the console. Enables the Confirm and Cancel slots to know their context at any time.</div>
+          <div class="class-props">
+            <div class="prop"><span class="prop-key">ToolContext.Current</span><span class="prop-val">→ active folder or null</span></div>
+            <div class="prop"><span class="prop-key">ToolContext.IsActive</span><span class="prop-val">→ bool</span></div>
+            <div class="prop"><span class="prop-key">Activate(folder) / Deactivate(folder)</span><span class="prop-val">→ void</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;font-size:13px;color:var(--txt2);">
+      <strong style="color:var(--txt);font-family:var(--mono);font-size:11px;">HELPERS</strong>&nbsp;&nbsp;
+      <code>PluginLog</code> — wraps SDK logging with <code>Info</code> / <code>Error</code> / <code>Warn</code> methods.&nbsp;&nbsp;
+      <code>PluginResources</code> — wraps <code>Assembly.GetManifestResourceStream()</code> for loading embedded SVG icons.
+    </div>
+  </div>
+</section>
+
+<!-- ── ACADSEND ───────────────────────────────────────────── -->
+<section id="acadsend">
+  <div class="wrapper">
+    <div class="section-label">03 — IPC Bridge</div>
+    <h2 class="section-title">AcadSend</h2>
+    <p class="section-sub">Static utility class that generates AppleScript strings and executes them via <code>/usr/bin/osascript</code> — the gateway from C# into AutoCAD 2027.</p>
+
+    <div class="flow-steps" style="margin-bottom:32px;">
+      <div class="flow-step">
+        <div class="flow-step-n" style="background:var(--teal)">1</div>
+        <div class="flow-step-name">Command String</div>
+        <div class="flow-step-sub">Raw CAD cmd</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-n" style="background:var(--cyan)">2</div>
+        <div class="flow-step-name">Sanitise()</div>
+        <div class="flow-step-sub">Escape &amp; lowercase</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-n" style="background:var(--purple)">3</div>
+        <div class="flow-step-name">Script Template</div>
+        <div class="flow-step-sub">Keystroke / KeyCode / Shortcut</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-n" style="background:var(--gold)">4</div>
+        <div class="flow-step-name">Write .scpt</div>
+        <div class="flow-step-sub">Temp file via GetTempFileName</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-n" style="background:var(--green)">5</div>
+        <div class="flow-step-name">osascript</div>
+        <div class="flow-step-sub">/usr/bin/ execution</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-n" style="background:var(--teal2)">6</div>
+        <div class="flow-step-name">AutoCAD 2027</div>
+        <div class="flow-step-sub">Keystroke received</div>
+      </div>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:20px;">
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Signature</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="api-type c-teal" style="border-color:var(--teal3)">Blocking</span></td>
+            <td><span class="api-sig">Send(string command)</span></td>
+            <td class="api-desc">Types command + Enter into AutoCAD. Waits up to 3000ms for osascript to exit. Used for all tool folder button presses.</td>
+          </tr>
+          <tr>
+            <td><span class="api-type c-purple" style="border-color:#5a3a88">Non-blocking</span></td>
+            <td><span class="api-sig">SendAsync(string command)</span></td>
+            <td class="api-desc">Fires script and returns immediately. Used by <code>NudgeEngine</code> for high-frequency rotary encoder input — prevents UI lag.</td>
+          </tr>
+          <tr>
+            <td><span class="api-type c-gold" style="border-color:var(--gold2)">Key Codes</span></td>
+            <td><span class="api-sig">SendEnter() / SendEscape() / SendTab()</span></td>
+            <td class="api-desc">Sends raw macOS key codes: Enter=36, Escape=53, Tab=48. Used for slot 7 (Confirm) and slot 6 (Cancel) grid tiles.</td>
+          </tr>
+          <tr>
+            <td><span class="api-type c-cyan" style="border-color:#1a6070">Modifier Keys</span></td>
+            <td><span class="api-sig">SendShortcut(string key, string modifiers)</span></td>
+            <td class="api-desc">Sends a keystroke with modifier(s). E.g. <code>Cmd+Z</code> for Undo, <code>Cmd+Shift+Z</code> for Redo.</td>
+          </tr>
+          <tr>
+            <td><span class="api-type c-green" style="border-color:#1e5c38">Mode Toggles</span></td>
+            <td><span class="api-sig">SendToggle(string sysVar)</span></td>
+            <td class="api-desc">ORTHOMODE→Cmd+L &nbsp; POLARMODE→Cmd+U &nbsp; OSMODE→F3 &nbsp; AUTOSNAP→Cmd+Shift+T. All work mid-command inside AutoCAD.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;font-size:13px;color:var(--txt2);">
+      <strong style="font-family:var(--mono);font-size:10px;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;">Command Sanitisation</strong><br><br>
+      Before any command is injected, <code>Sanitise()</code> converts to lowercase, escapes backslashes and double-quotes, and strips newlines — ensuring the string is valid inside an AppleScript <code>keystroke</code> block.
+    </div>
+  </div>
+</section>
+
+<!-- ── NUDGE ENGINE ───────────────────────────────────────── -->
+<section id="nudge">
+  <div class="wrapper">
+    <div class="section-label">04 — Rotary Encoders</div>
+    <h2 class="section-title">NudgeEngine</h2>
+    <p class="section-sub">Velocity-scaled, non-blocking X/Y viewport panning. Handles high-frequency encoder input with delta accumulation to prevent missed events when osascript is busy.</p>
+
+    <div class="nudge-grid">
+      <div class="formula-box">
+        <div class="formula-label">Velocity Formula</div>
+        <div class="formula-eq">velocity = sign(raw) × (<span class="c-gold">FineScale</span> + <span class="c-cyan">TurboCoeff</span> × |raw|^<span class="c-purple">Exponent</span>)</div>
+        <div class="const-row">
+          <span class="const-name">FineScale</span>
+          <span class="const-val">0.6</span>
+          <span class="const-desc">Base movement per encoder tick</span>
+        </div>
+        <div class="const-row">
+          <span class="const-name">TurboCoeff</span>
+          <span class="const-val">1.5</span>
+          <span class="const-desc">Multiplier for fast spin velocity</span>
+        </div>
+        <div class="const-row">
+          <span class="const-name">Exponent</span>
+          <span class="const-val">1.65</span>
+          <span class="const-desc">Non-linear acceleration curve</span>
+        </div>
+        <div class="const-row">
+          <span class="const-name">MaxDelta</span>
+          <span class="const-val">12</span>
+          <span class="const-desc">Hard clamp on raw input diff</span>
+        </div>
+        <div class="const-row">
+          <span class="const-name">IdleResetMs</span>
+          <span class="const-val">60ms</span>
+          <span class="const-desc">Gap that wipes stale accumulators</span>
+        </div>
+      </div>
+
+      <div class="model-box">
+        <div class="model-label">Delta Accumulation Model</div>
+        <div class="model-steps">
+          <div class="model-step"><span class="model-step-n">1</span><span><code>FeedX()</code> / <code>FeedY()</code> called on each encoder tick from the SDK</span></div>
+          <div class="model-step"><span class="model-step-n">2</span><span>Velocity added to <code>_accumX</code> / <code>_accumY</code> float accumulators</span></div>
+          <div class="model-step"><span class="model-step-n">3</span><span>Integer part truncated → drained into <code>_pendingDx</code> / <code>_pendingDy</code></span></div>
+          <div class="model-step"><span class="model-step-n">4</span><span><code>TryFire()</code> acquires Interlocked CAS lock and dispatches one osascript call</span></div>
+          <div class="model-step"><span class="model-step-n">5</span><span>Excess deltas accumulate while in-flight; flushed when the process exits</span></div>
+          <div class="model-step"><span class="model-step-n">6</span><span>60ms idle gap resets all accumulators so stale values never fire</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card bg-green" style="display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:start;padding:20px 24px;">
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--green);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">AutoCAD Pan Command</div>
+        <code style="font-size:13px;display:block;padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);">'_-pan 0,0 {dx},{dy} \n</code>
+      </div>
+      <div style="font-size:13px;color:var(--txt2);line-height:1.7;padding-top:26px;">
+        The leading apostrophe makes <code>_-pan</code> a <em>transparent</em> command — it works inside other active AutoCAD commands without cancelling them. Sent via an inline AppleScript <code>-e</code> flag (no temp <code>.scpt</code> file) for maximum speed.
+        <br><br>
+        <strong style="color:var(--txt)">NudgeXAdjustment</strong> and <strong style="color:var(--txt)">NudgeYAdjustment</strong> are two <code>PluginDynamicAdjustment</code> subclasses — one per axis — that forward encoder diffs to <code>NudgeEngine.Instance.FeedX/Y()</code>.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ACTION SYSTEM ──────────────────────────────────────── -->
+<section id="actions">
+  <div class="wrapper">
+    <div class="section-label">05 — Action System</div>
+    <h2 class="section-title">Tool Folders &amp; Commands</h2>
+    <p class="section-sub">CAD operations are organized into hierarchical <code>CadToolFolder</code> groups, each exposing an 8-button contextual grid on the Loupedeck device.</p>
+
+    <div class="actions-layout">
+      <!-- Left: 8-slot visualizer -->
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:14px;">8-Slot Button Grid (CtxBtn)</div>
+        <div class="grid-vis">
+          <!-- Slots 0-5 -->
+          <div class="grid-tile" style="border-color:var(--teal3);background:rgba(0,212,255,0.04);color:var(--teal);">
+            <span class="tile-num c-teal">0</span>
+            <span class="tile-label">Sub-cmd</span>
+          </div>
+          <div class="grid-tile" style="border-color:var(--teal3);background:rgba(0,212,255,0.04);color:var(--teal);">
+            <span class="tile-num c-teal">1</span>
+            <span class="tile-label">Sub-cmd</span>
+          </div>
+          <div class="grid-tile" style="border-color:var(--teal3);background:rgba(0,212,255,0.04);color:var(--teal);">
+            <span class="tile-num c-teal">2</span>
+            <span class="tile-label">Sub-cmd</span>
+          </div>
+          <div class="grid-tile" style="border-color:var(--teal3);background:rgba(0,212,255,0.04);color:var(--teal);">
+            <span class="tile-num c-teal">3</span>
+            <span class="tile-label">Sub-cmd</span>
+          </div>
+          <div class="grid-tile" style="border-color:var(--teal3);background:rgba(0,212,255,0.04);color:var(--teal);">
+            <span class="tile-num c-teal">4</span>
+            <span class="tile-label">Sub-cmd</span>
+          </div>
+          <div class="grid-tile" style="border-color:var(--teal3);background:rgba(0,212,255,0.04);color:var(--teal);">
+            <span class="tile-num c-teal">5</span>
+            <span class="tile-label">Sub-cmd</span>
+          </div>
+          <!-- Slot 6 Cancel -->
+          <div class="grid-tile" style="border-color:#4060C0;background:rgba(64,96,192,0.1);color:#7090ff;">
+            <span class="tile-num" style="color:#7090ff">6</span>
+            <span class="tile-label">← Cancel<br><small style="font-size:9px;opacity:0.7">Escape</small></span>
+          </div>
+          <!-- Slot 7 Confirm -->
+          <div class="grid-tile" style="border-color:#3AAA3A;background:rgba(58,170,58,0.1);color:var(--green);">
+            <span class="tile-num" style="color:var(--green)">7</span>
+            <span class="tile-label">✓ Enter<br><small style="font-size:9px;opacity:0.7">Confirm</small></span>
+          </div>
+        </div>
+        <div class="grid-legend">
+          <div class="legend-row"><div class="legend-dot" style="background:var(--teal)"></div><span>Slots 0–5: context sub-commands (varies by tool)</span></div>
+          <div class="legend-row"><div class="legend-dot" style="background:#7090ff"></div><span>Slot 6: Escape / cancel &amp; close folder</span></div>
+          <div class="legend-row"><div class="legend-dot" style="background:var(--green)"></div><span>Slot 7: Enter / confirm current command</span></div>
+        </div>
+
+        <div style="margin-top:20px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius2);padding:18px;">
+          <div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--purple);text-transform:uppercase;margin-bottom:12px;">Procedural Icon Engine</div>
+          <div style="font-size:12.5px;color:var(--txt2);line-height:1.6;margin-bottom:12px;">
+            Every tile is rendered at runtime using <code>BitmapBuilder.FillRectangle()</code> on a 60-unit virtual canvas. Icons are computed from the tile's <em>label string</em> — no external image assets required.
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <span style="font-size:10px;padding:4px 10px;border-radius:99px;background:rgba(61,220,132,0.08);border:1px solid #1e5c38;color:var(--green);font-family:var(--mono);">✓ Confirm</span>
+            <span style="font-size:10px;padding:4px 10px;border-radius:99px;background:rgba(112,144,255,0.08);border:1px solid #3a4a88;color:#7090ff;font-family:var(--mono);">← Cancel</span>
+            <span style="font-size:10px;padding:4px 10px;border-radius:99px;background:rgba(255,155,50,0.08);border:1px solid #8b4a10;color:#ff9b32;font-family:var(--mono);">⇥ TAB</span>
+            <span style="font-size:10px;padding:4px 10px;border-radius:99px;background:rgba(179,136,255,0.08);border:1px solid #5a3a88;color:var(--purple);font-family:var(--mono);">⇄ Toggle</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: tool groups -->
+      <div>
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:14px;">Tool Group Hierarchy</div>
+        <div class="tool-groups">
+          <div class="tool-group bg-teal">
+            <div style="before:var(--teal)">
+              <div class="tg-name c-teal">CAD Draw</div>
+              <div class="tg-count">6 tools</div>
+            </div>
+            <div>
+              <div class="tg-tools">Line · Polyline · Circle · Arc · Rectangle · Polygon</div>
+              <div class="tg-desc">Geometry creation. TAB modifiers cycle between angle/length fields. @ operator references previous coordinates.</div>
+            </div>
+          </div>
+          <div class="tool-group bg-purple">
+            <div>
+              <div class="tg-name c-purple">CAD Modify</div>
+              <div class="tg-count">9 tools</div>
+            </div>
+            <div>
+              <div class="tg-tools">Move · Copy · Rotate · Scale · Trim · Extend · Fillet · Mirror · Offset</div>
+              <div class="tg-desc">Object transformation. Axis-locking, Fence/Crossing selection modes, copy-mode toggle flags.</div>
+            </div>
+          </div>
+          <div class="tool-group bg-gold">
+            <div>
+              <div class="tg-name c-gold">CAD Precision</div>
+              <div class="tg-count">4 tools</div>
+            </div>
+            <div>
+              <div class="tg-tools">DimLinear · DimAligned · DimAngular · Align</div>
+              <div class="tg-desc">Dimensioning and exact placement. Manages complex multi-step command sequences per folder.</div>
+            </div>
+          </div>
+          <div class="tool-group bg-green">
+            <div>
+              <div class="tg-name c-green">CAD Advanced</div>
+              <div class="tg-count">4 tools</div>
+            </div>
+            <div>
+              <div class="tg-tools">Array (Rect · Polar · Path) · Text · MText</div>
+              <div class="tg-desc">Complex entities requiring multi-parameter strings rather than simple flag options.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── GLOBALS ────────────────────────────────────────────── -->
+<section id="globals">
+  <div class="wrapper">
+    <div class="section-label">06 — Global Actions</div>
+    <h2 class="section-title">Quick Ring &amp; Shortcuts</h2>
+    <p class="section-sub">Context-free actions available regardless of which tool folder is active — Undo/Redo, viewport shortcuts, and mode toggles.</p>
+
+    <div class="globals-grid">
+
+      <!-- Quick Ring -->
+      <div class="card" style="padding:24px;">
+        <div style="font-family:var(--display);font-weight:700;font-size:16px;color:var(--teal);margin-bottom:6px;">QuickRingFolder</div>
+        <div style="font-size:12.5px;color:var(--txt2);margin-bottom:16px;">Circular menu providing rapid viewport and drawing operations.</div>
+        <div class="ring-list">
+          <div class="ring-item"><span class="ring-name">Zoom Extents</span><span class="ring-cmd">_zoom e</span></div>
+          <div class="ring-item"><span class="ring-name">Zoom Window</span><span class="ring-cmd">_zoom w</span></div>
+          <div class="ring-item"><span class="ring-name">Zoom Previous</span><span class="ring-cmd">_zoom p</span></div>
+          <div class="ring-item"><span class="ring-name">Layer Manager</span><span class="ring-cmd">_layer</span></div>
+          <div class="ring-item"><span class="ring-name">Scale Objects</span><span class="ring-cmd">_scale</span></div>
+          <div class="ring-item"><span class="ring-name">Regen</span><span class="ring-cmd">_regen</span></div>
+        </div>
+      </div>
+
+      <!-- Undo / Redo -->
+      <div class="card" style="padding:24px;">
+        <div style="font-family:var(--display);font-weight:700;font-size:16px;color:var(--red);margin-bottom:6px;">Undo / Redo</div>
+        <div style="font-size:12.5px;color:var(--txt2);margin-bottom:20px;"><code>PluginDynamicCommand</code> implementations. Always available.</div>
+        <div class="undo-card" style="background:rgba(255,107,107,0.05);border:1px solid #7a2020;border-radius:var(--radius);margin-bottom:10px;">
+          <div class="undo-key c-red">Undo</div>
+          <div class="undo-shortcut c-txt2"><kbd class="kbd">⌘</kbd> + <kbd class="kbd">Z</kbd></div>
+        </div>
+        <div class="undo-card" style="background:rgba(240,192,64,0.05);border:1px solid var(--gold2);border-radius:var(--radius);">
+          <div class="undo-key c-gold">Redo</div>
+          <div class="undo-shortcut c-txt2"><kbd class="kbd">⌘</kbd> + <kbd class="kbd">⇧</kbd> + <kbd class="kbd">Z</kbd></div>
+        </div>
+      </div>
+
+      <!-- Mode Toggles -->
+      <div class="card" style="padding:24px;">
+        <div style="font-family:var(--display);font-weight:700;font-size:16px;color:var(--gold);margin-bottom:6px;">Mode Toggles</div>
+        <div style="font-size:12.5px;color:var(--txt2);margin-bottom:16px;">Via <code>SendToggle()</code> — work mid-command inside AutoCAD.</div>
+        <div>
+          <div class="shortcut-row">
+            <span class="shortcut-sys c-teal">ORTHOMODE</span>
+            <span><kbd class="kbd">⌘</kbd> + <kbd class="kbd">L</kbd></span>
+          </div>
+          <div class="shortcut-row">
+            <span class="shortcut-sys c-cyan">POLARMODE</span>
+            <span><kbd class="kbd">⌘</kbd> + <kbd class="kbd">U</kbd></span>
+          </div>
+          <div class="shortcut-row">
+            <span class="shortcut-sys c-purple">OSMODE</span>
+            <span><kbd class="kbd">F3</kbd></span>
+          </div>
+          <div class="shortcut-row">
+            <span class="shortcut-sys c-gold">AUTOSNAP</span>
+            <span><kbd class="kbd">⌘</kbd> + <kbd class="kbd">⇧</kbd> + <kbd class="kbd">T</kbd></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── PACKAGE ────────────────────────────────────────────── -->
+<section id="package">
+  <div class="wrapper">
+    <div class="section-label">07 — Distribution</div>
+    <h2 class="section-title">Package &amp; Distribution</h2>
+    <p class="section-sub">Plugin manifest, bundled SVG icons, and the build pipeline for packaging and installing the plugin via the Loupedeck CLI.</p>
+
+    <div class="package-grid">
+      <div class="card">
+        <div style="font-family:var(--display);font-weight:700;font-size:15px;color:var(--teal);margin-bottom:4px;">LoupedeckPackage.yaml</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--txt3);margin-bottom:16px;">src/package/metadata/LoupedeckPackage.yaml</div>
+        <table class="yaml-table">
+          <tr><td class="yaml-key">PackageName:</td><td class="yaml-val">Loupedeck.MyPlugin</td></tr>
+          <tr><td class="yaml-key">DisplayName:</td><td class="yaml-val">CadFlow</td></tr>
+          <tr><td class="yaml-key">Version:</td><td class="yaml-val">1.0.0</td></tr>
+          <tr><td class="yaml-key">ApplicationTarget:</td><td class="yaml-val">com.autodesk.autocad2027</td></tr>
+          <tr><td class="yaml-key">ProfileScope:</td><td class="yaml-val">Auto-activate on AutoCAD focus</td></tr>
+          <tr><td class="yaml-key">DllName:</td><td class="yaml-val">CadFlow.dll</td></tr>
+        </table>
+      </div>
+
+      <div class="card">
+        <div style="font-family:var(--display);font-weight:700;font-size:15px;color:var(--purple);margin-bottom:4px;">SVG Action Icons</div>
+        <div style="font-size:12.5px;color:var(--txt2);margin-bottom:14px;">Embedded in <code>bin/Debug/actionicons/</code> — loaded via <code>PluginResources</code>, shown in the Loupedeck app UI (not on-device).</div>
+        <div class="icon-grid">
+          <div class="icon-cell">Line</div>
+          <div class="icon-cell">Polyline</div>
+          <div class="icon-cell">Circle</div>
+          <div class="icon-cell">Arc</div>
+          <div class="icon-cell">Rect</div>
+          <div class="icon-cell">Polygon</div>
+          <div class="icon-cell">Move</div>
+          <div class="icon-cell">Copy</div>
+          <div class="icon-cell">Rotate</div>
+          <div class="icon-cell">Scale</div>
+          <div class="icon-cell">Trim</div>
+          <div class="icon-cell">Fillet</div>
+          <div class="icon-cell">Offset</div>
+          <div class="icon-cell">Mirror</div>
+          <div class="icon-cell">Array</div>
+          <div class="icon-cell">Dim</div>
+          <div class="icon-cell">Align</div>
+          <div class="icon-cell">Text</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:14px;">Build &amp; Install Pipeline</div>
+    <div class="build-pipeline">
+      <div class="build-step">
+        <div class="build-n c-teal" style="opacity:0.3">01</div>
+        <div class="build-title">dotnet build</div>
+        <div class="build-sub">Compiles CadFlow.dll</div>
+      </div>
+      <div class="build-step">
+        <div class="build-n c-cyan" style="opacity:0.3">02</div>
+        <div class="build-title">Package</div>
+        <div class="build-sub">Zip metadata + DLLs + icons + profiles</div>
+      </div>
+      <div class="build-step">
+        <div class="build-n c-purple" style="opacity:0.3">03</div>
+        <div class="build-title">logiplugintool</div>
+        <div class="build-sub">Loupedeck CLI for install/debug</div>
+      </div>
+      <div class="build-step">
+        <div class="build-n c-gold" style="opacity:0.3">04</div>
+        <div class="build-title">Enable Plugin</div>
+        <div class="build-sub">Loupedeck app → Marketplace → Local</div>
+      </div>
+      <div class="build-step">
+        <div class="build-n c-green" style="opacity:0.3">05</div>
+        <div class="build-title">Open AutoCAD</div>
+        <div class="build-sub">Profile auto-activates on app focus</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── GLOSSARY ───────────────────────────────────────────── -->
+<section id="glossary">
+  <div class="wrapper">
+    <div class="section-label">08 — Reference</div>
+    <h2 class="section-title">Glossary</h2>
+    <p class="section-sub">Core terms used throughout the CadFlow codebase and Loupedeck SDK integration.</p>
+
+    <div class="glossary-grid">
+      <div class="gloss-item"><span class="gloss-term">PluginDynamicFolder</span><span class="gloss-def">Loupedeck SDK base class for folders that populate a button grid dynamically at runtime.</span></div>
+      <div class="gloss-item"><span class="gloss-term">PluginDynamicAdjustment</span><span class="gloss-def">SDK base class for dial/encoder adjustments. Used for NudgeXAdjustment and NudgeYAdjustment.</span></div>
+      <div class="gloss-item"><span class="gloss-term">ClientApplication</span><span class="gloss-def">SDK class that links a plugin to a specific macOS app bundle ID, enabling auto-profile switching.</span></div>
+      <div class="gloss-item"><span class="gloss-term">CtxBtn</span><span class="gloss-def">Lightweight struct holding Label, Cmd (AutoCAD string or special tag), and IsToggle flag per slot.</span></div>
+      <div class="gloss-item"><span class="gloss-term">ToolContext</span><span class="gloss-def">Static class tracking which CadToolFolder is open. Enables Confirm/Cancel buttons to know their state.</span></div>
+      <div class="gloss-item"><span class="gloss-term">AcadSend</span><span class="gloss-def">Static utility that generates and executes AppleScript to inject keystrokes into AutoCAD 2027.</span></div>
+      <div class="gloss-item"><span class="gloss-term">NudgeEngine</span><span class="gloss-def">Singleton handling velocity-scaled encoder input with delta accumulation and async fire-and-forget dispatch.</span></div>
+      <div class="gloss-item"><span class="gloss-term">osascript</span><span class="gloss-def">macOS CLI tool that executes AppleScript. CadFlow calls it via System.Diagnostics.Process.</span></div>
+      <div class="gloss-item"><span class="gloss-term">_-pan</span><span class="gloss-def">AutoCAD's transparent pan command. The leading apostrophe allows use inside any active command.</span></div>
+      <div class="gloss-item"><span class="gloss-term">BitmapBuilder</span><span class="gloss-def">Loupedeck SDK class for drawing on-device icons. CadFlow uses FillRectangle() exclusively for pixel-art tiles.</span></div>
+      <div class="gloss-item"><span class="gloss-term">logiplugintool</span><span class="gloss-def">Loupedeck CLI utility for packaging, installing, and debugging local plugins during development.</span></div>
+      <div class="gloss-item"><span class="gloss-term">DefaultProfile20.lp5</span><span class="gloss-def">Pre-configured .lp5 profile bundled with the plugin to map all CadFlow actions on first install.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">CadFlow</div>
+    <div class="footer-sub">Loupedeck × AutoCAD 2027 · macOS · .NET 8</div>
+    <a href="https://github.com/AlokDadhich/Cadflow" class="footer-link" target="_blank">github.com/AlokDadhich/Cadflow</a>
+    <div class="footer-tags">
+      <span class="tag">macOS</span>
+      <span class="tag">.NET 8</span>
+      <span class="tag">C#</span>
+      <span class="tag">AppleScript IPC</span>
+      <span class="tag">Loupedeck SDK</span>
+      <span class="tag">AutoCAD 2027</span>
+      <span class="tag">osascript</span>
+      <span class="tag">BitmapBuilder</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Smooth active nav highlighting
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(a => a.style.color = '');
+      const active = document.querySelector(`.nav-links a[href="#${e.target.id}"]`);
+      if (active) active.style.color = 'var(--teal)';
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => observer.observe(s));
+
+// Stagger-reveal on scroll
+const cards = document.querySelectorAll('.card, .class-card, .layer-card, .tool-group, .gloss-item, .ring-item');
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+cards.forEach((c, i) => {
+  c.style.opacity = '0';
+  c.style.transform = 'translateY(16px)';
+  c.style.transition = `opacity 0.4s ease ${(i % 6) * 0.06}s, transform 0.4s ease ${(i % 6) * 0.06}s, border-color 0.2s`;
+  revealObs.observe(c);
+});
+</script>
+
+</body>
+</html>
