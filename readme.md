@@ -5,8 +5,11 @@
 <br>
 
 ```
-Loupedeck Hardware  →  CadFlowPlugin  →  CadToolFolder  →  AcadSend  →  osascript  →  AutoCAD 2027
-     Button/Encoder      Entry & Lifecycle    Action System     IPC Bridge    execution
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   Loupedeck     │     │  CadFlowPlugin  │     │  CadToolFolder  │     │    AcadSend     │     │   osascript     │     │  AutoCAD 2027   │
+│   Hardware      │ ──▶ │  & Application  │ ──▶ │  Action System  │ ──▶ │   IPC Bridge    │ ──▶ │  /usr/bin/      │ ──▶ │                 │
+│ Button/Encoder  │     │Entry & Lifecycle│     │  UI State/Icons │     │  AppleScript    │     │   execution     │     │ Keystroke recv  │
+└─────────────────┘     └─────────────────┘     └─────────────────┘     └─────────────────┘     └─────────────────┘     └─────────────────┘
 ```
 
 <br>
@@ -260,4 +263,9 @@ DllName:             CadFlow.dll
 ---
 
 **CadFlow** · Loupedeck × AutoCAD 2027 · macOS · .NET 8 · C#
-[github.com/AlokDadhich/Cadflow](https://github.com/AlokDadhich/Cadflow)
+
+| Resource | Link |
+|---|---|
+| GitHub | [github.com/AlokDadhich/Cadflow](https://github.com/AlokDadhich/Cadflow) |
+| Documentation | [alokdadhich.github.io/Cadflow](https://alokdadhich.github.io/Cadflow/) |
+| XY Axis Writeup | [alokdadhich.github.io/Cadflow/XY_Axis_Problem.html](https://alokdadhich.github.io/Cadflow/XY_Axis_Problem.html) |
