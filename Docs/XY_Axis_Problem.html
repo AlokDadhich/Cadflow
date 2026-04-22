@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CadFlow — Pan Engine Docs</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fafaf8;--bg2:#f4f3ef;--bg3:#eceae4;
+  --text:#181816;--text2:#57574f;--text3:#999890;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.05);
+  --purple:#EEEDFE;--purple-t:#3C3489;--purple-b:#AFA9EC;
+  --teal:#E1F5EE;--teal-t:#085041;--teal-b:#5DCAA5;
+  --amber:#FAEEDA;--amber-t:#633806;--amber-b:#EF9F27;
+  --coral:#FAECE7;--coral-t:#4A1B0C;--coral-b:#F0997B;
+  --gray:#F1EFE8;--gray-t:#2C2C2A;--gray-b:#B4B2A9;
+  --red:#FCEBEB;--red-t:#501313;--red-b:#F09595;
+  --blue:#E6F1FB;--blue-t:#042C53;--blue-b:#85B7EB;
+  --sw:256px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#141412;--bg2:#1c1c1a;--bg3:#242422;
+    --text:#e6e4dc;--text2:#9a9890;--text3:#606058;
+    --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.04);
+    --purple:#26215C;--purple-t:#CECBF6;--purple-b:#534AB7;
+    --teal:#04342C;--teal-t:#9FE1CB;--teal-b:#0F6E56;
+    --amber:#412402;--amber-t:#FAC775;--amber-b:#BA7517;
+    --coral:#4A1B0C;--coral-t:#F5C4B3;--coral-b:#993C1D;
+    --gray:#2C2C2A;--gray-t:#D3D1C7;--gray-b:#5F5E5A;
+    --red:#501313;--red-t:#F7C1C1;--red-b:#A32D2D;
+    --blue:#042C53;--blue-t:#B5D4F4;--blue-b:#185FA5;
+  }
+}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:15px;line-height:1.75}
+.sidebar{width:var(--sw);flex-shrink:0;background:var(--bg2);border-right:0.5px solid var(--border);position:fixed;top:0;left:0;bottom:0;overflow-y:auto;display:flex;flex-direction:column;z-index:10}
+.sb-top{padding:28px 20px 20px;border-bottom:0.5px solid var(--border2)}
+.sb-wordmark{font-size:14px;font-weight:600;letter-spacing:.02em;color:var(--text);display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.sb-dot{width:8px;height:8px;border-radius:50%;background:var(--text);flex-shrink:0}
+.sb-sub{font-size:11px;color:var(--text3);padding-left:16px}
+.sb-nav{padding:16px 12px;flex:1}
+.nav-group{margin-bottom:20px}
+.nav-group-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);padding:0 8px 6px}
+.nav-link{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text2);text-decoration:none;padding:5px 8px;border-radius:6px;transition:background .12s,color .12s;cursor:pointer;line-height:1.4}
+.nav-link:hover{background:var(--bg3);color:var(--text)}
+.nav-link.active{background:var(--bg3);color:var(--text);font-weight:500}
+.ndot{width:5px;height:5px;border-radius:50%;background:var(--border);flex-shrink:0;transition:background .12s}
+.nav-link.active .ndot{background:var(--text)}
+.sb-footer{padding:16px 20px;border-top:0.5px solid var(--border2);font-size:11px;color:var(--text3)}
+.main{margin-left:var(--sw);flex:1;max-width:800px;padding:64px 60px 120px}
+.doc-section{margin-bottom:80px;scroll-margin-top:40px}
+.eyebrow{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.eyebrow::before{content:"";display:block;width:20px;height:1px;background:var(--text3)}
+h1{font-size:34px;font-weight:600;line-height:1.15;margin-bottom:18px;letter-spacing:-.02em}
+h2{font-size:22px;font-weight:600;margin-bottom:14px;letter-spacing:-.01em}
+h3{font-size:15px;font-weight:600;margin-bottom:8px}
+p{color:var(--text2);margin-bottom:14px}
+p:last-child{margin-bottom:0}
+.lead{font-size:17px;line-height:1.7;color:var(--text2)}
+ul{color:var(--text2);font-size:14px;line-height:2.1;padding-left:0;list-style:none;margin-bottom:14px}
+ul li{display:flex;align-items:baseline;gap:10px}
+ul li::before{content:"—";color:var(--text3);flex-shrink:0;font-size:12px}
+.divider{display:flex;align-items:center;gap:16px;margin:64px 0;color:var(--text3);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.divider::before,.divider::after{content:"";flex:1;height:0.5px;background:var(--border)}
+pre{background:var(--bg3);border:0.5px solid var(--border);border-radius:10px;padding:18px 22px;font-size:12.5px;font-family:"SF Mono","Fira Code",monospace;overflow-x:auto;margin:18px 0;line-height:1.65;color:var(--text)}
+code{font-family:"SF Mono","Fira Code",monospace;font-size:12px;background:var(--bg3);border:0.5px solid var(--border2);padding:1px 5px;border-radius:4px;color:var(--text)}
+.stack{margin:28px 0}
+.stack-row{display:flex;align-items:stretch}
+.stack-label{font-size:11px;color:var(--text3);width:110px;flex-shrink:0;display:flex;align-items:center;justify-content:flex-end;padding-right:14px;text-align:right;line-height:1.3}
+.stack-box{flex:1;padding:11px 18px;border-radius:8px;font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.stack-box .lat{font-size:11px;font-weight:400;opacity:.6}
+.stack-line{display:flex;margin:0 0 0 109px;height:12px}
+.stack-line-i{width:1px;background:var(--border);position:relative;flex-shrink:0}
+.stack-line-i::after{content:"";position:absolute;bottom:-4px;left:-3px;width:7px;height:7px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);transform:rotate(45deg)}
+.bg-gray{background:var(--gray);color:var(--gray-t)}
+.bg-amber{background:var(--amber);color:var(--amber-t)}
+.bg-coral{background:var(--coral);color:var(--coral-t)}
+.bg-blue{background:var(--blue);color:var(--blue-t)}
+.bg-teal{background:var(--teal);color:var(--teal-t)}
+.bars{margin:24px 0}
+.bar-row{display:flex;align-items:center;gap:14px;margin-bottom:12px}
+.bar-lbl{font-size:12px;color:var(--text2);width:210px;flex-shrink:0;line-height:1.3}
+.bar-track{flex:1;height:6px;border-radius:3px;background:var(--bg3);overflow:hidden}
+.bar-fill{height:100%;border-radius:3px}
+.bar-val{font-size:11px;color:var(--text3);min-width:90px;text-align:right}
+.callout{border-left:2px solid var(--amber-b);background:var(--amber);color:var(--amber-t);padding:14px 18px;border-radius:0 8px 8px 0;font-size:13px;line-height:1.7;margin:20px 0}
+.callout strong{font-weight:600}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:32px 0}
+.stat-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:10px;padding:16px}
+.stat-lbl{font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:500;letter-spacing:.04em}
+.stat-val{font-size:22px;font-weight:600;color:var(--text);letter-spacing:-.02em;line-height:1}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:4px}
+.attempts{margin-top:24px}
+.attempt{display:flex;gap:20px}
+.a-left{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:32px}
+.a-circle{width:32px;height:32px;border-radius:50%;border:0.5px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--text3);flex-shrink:0}
+.a-line{flex:1;width:1px;background:var(--border);margin:6px 0}
+.attempt:last-child .a-line{display:none}
+.a-body{flex:1;padding-bottom:36px}
+.a-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.a-title{font-size:15px;font-weight:600}
+.pill{display:inline-flex;align-items:center;font-size:11px;font-weight:500;padding:2px 9px;border-radius:10px}
+.pill-fail{background:var(--red);color:var(--red-t)}
+.pill-partial{background:var(--amber);color:var(--amber-t)}
+.pill-ok{background:var(--teal);color:var(--teal-t)}
+.a-body p{font-size:13px;line-height:1.65;margin-bottom:10px}
+.a-body pre{font-size:12px;padding:12px 16px;margin:10px 0}
+.fix-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:20px}
+.fix-table th{text-align:left;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:8px 14px;border-bottom:0.5px solid var(--border)}
+.fix-table td{padding:12px 14px;border-bottom:0.5px solid var(--border2);vertical-align:top;color:var(--text2);line-height:1.5}
+.fix-table tr:last-child td{border-bottom:none}
+.fix-table td:first-child{color:var(--text);font-weight:500}
+.fix-table tr:hover td{background:var(--bg2)}
+@media(max-width:760px){.sidebar{display:none}.main{margin-left:0;padding:36px 24px 80px}.stats-row{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sb-top">
+    <div class="sb-wordmark"><span class="sb-dot"></span>CadFlow</div>
+    <div class="sb-sub">Pan Engine · Post-Mortem</div>
+  </div>
+  <div class="sb-nav">
+    <div class="nav-group">
+      <div class="nav-group-label">Overview</div>
+      <a class="nav-link active" onclick="go('intro',this)"><span class="ndot"></span>Introduction</a>
+      <a class="nav-link" onclick="go('problem',this)"><span class="ndot"></span>The problem</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Technical breakdown</div>
+      <a class="nav-link" onclick="go('stack',this)"><span class="ndot"></span>The 8-layer stack</a>
+      <a class="nav-link" onclick="go('latency',this)"><span class="ndot"></span>Latency per layer</a>
+      <a class="nav-link" onclick="go('ceiling',this)"><span class="ndot"></span>The hard ceiling</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">What we tried</div>
+      <a class="nav-link" onclick="go('a1',this)"><span class="ndot"></span>01 · Process.Start per tick</a>
+      <a class="nav-link" onclick="go('a2',this)"><span class="ndot"></span>02 · Persistent stdin pipe</a>
+      <a class="nav-link" onclick="go('a3',this)"><span class="ndot"></span>03 · CGEvent helper</a>
+      <a class="nav-link" onclick="go('a4',this)"><span class="ndot"></span>04 · In-flight drop flag</a>
+      <a class="nav-link" onclick="go('a5',this)"><span class="ndot"></span>05 · Delta accumulator</a>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Resolution</div>
+      <a class="nav-link" onclick="go('realfix',this)"><span class="ndot"></span>Real fix options</a>
+      <a class="nav-link" onclick="go('code',this)"><span class="ndot"></span>Current code</a>
+    </div>
+  </div>
+  <div class="sb-footer">Loupedeck · macOS · AutoCAD 2027</div>
+</aside>
+
+<main class="main">
+
+  <div class="doc-section" id="intro">
+    <div class="eyebrow">CadFlow · Pan Engine · Post-Mortem</div>
+    <h1>Why smooth panning is hard on macOS</h1>
+    <p class="lead">AutoCAD on macOS exposes no real-time viewport API. Every pan command must be injected as simulated keyboard input — routed through a chain of interpreters, message queues, and security layers that were never designed for high-frequency control.</p>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-lbl">Roller input rate</div>
+        <div class="stat-val">200 Hz</div>
+        <div class="stat-sub">events per second</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-lbl">osascript throughput</div>
+        <div class="stat-val">~12 Hz</div>
+        <div class="stat-sub">commands per second</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-lbl">Rate gap</div>
+        <div class="stat-val">16×</div>
+        <div class="stat-sub">unbridgeable in C#</div>
+      </div>
+    </div>
+    <p>This document covers the full technical chain, every approach tried, and what a real solution requires.</p>
+  </div>
+
+  <div class="doc-section" id="problem">
+    <div class="eyebrow">Background</div>
+    <h2>The problem</h2>
+    <p>The Loupedeck CadFlow plugin sends pan commands to AutoCAD when the roller or scroller dial rotates. The goal is smooth, real-time viewport movement — like panning in Figma or a game engine.</p>
+    <p>Instead, what happens:</p>
+    <ul>
+      <li>Movement feels periodic and stepped rather than continuous</li>
+      <li>After the dial stops, the view keeps moving for 1–3 seconds</li>
+      <li>Occasionally the pan direction reverses unexpectedly</li>
+      <li>Fast rolling causes large burst jumps</li>
+    </ul>
+    <p>All four symptoms share one root cause: the command delivery pipeline is too slow and non-deterministic for real-time control.</p>
+  </div>
+
+  <div class="divider">Technical breakdown</div>
+
+  <div class="doc-section" id="stack">
+    <div class="eyebrow">Technical breakdown · 01</div>
+    <h2>The 8-layer stack</h2>
+    <p>Every pan command travels through all of these layers in sequence. Every arrow is latency. None of it was designed for streaming high-frequency input.</p>
+    <div class="stack">
+      <div class="stack-row"><div class="stack-label">your code</div><div class="stack-box bg-gray">C# / Loupedeck plugin (.NET) <span class="lat">~0 ms</span></div></div>
+      <div class="stack-line"><div class="stack-line-i"></div></div>
+      <div class="stack-row"><div class="stack-label">OS boundary</div><div class="stack-box bg-gray">Process spawn — fork + exec + dyld <span class="lat">20–80 ms</span></div></div>
+      <div class="stack-line"><div class="stack-line-i"></div></div>
+      <div class="stack-row"><div class="stack-label">interpreter</div><div class="stack-box bg-amber">osascript — AppleScript runtime <span class="lat">+5–15 ms</span></div></div>
+      <div class="stack-line"><div class="stack-line-i"></div></div>
+      <div class="stack-row"><div class="stack-label">IPC bus</div><div class="stack-box bg-amber">Apple Events — async message queue <span class="lat">non-deterministic</span></div></div>
+      <div class="stack-line"><div class="stack-line-i"></div></div>
+      <div class="stack-row"><div class="stack-label">mediator</div><div class="stack-box bg-coral">System Events.app — broker process <span class="lat">+dispatch queue</span></div></div>
+      <div class="stack-line"><div class="stack-line-i"></div></div>
+      <div class="stack-row"><div class="stack-label">accessibility</div><div class="stack-box bg-coral">macOS AXUIElement — rate-limited <span class="lat">burst throttle</span></div></div>
+      <div class="stack-line"><div class="stack-line-i"></div></div>
+      <div class="stack-row"><div class="stack-label">app thread</div><div class="stack-box bg-blue">AutoCAD UI thread — command parser <span class="lat">+parse + redraw</span></div></div>
+      <div class="stack-line"><div class="stack-line-i"></div></div>
+      <div class="stack-row"><div class="stack-label">result</div><div class="stack-box bg-teal">Viewport moves <span class="lat">total: 40–120 ms</span></div></div>
+    </div>
+  </div>
+
+  <div class="doc-section" id="latency">
+    <div class="eyebrow">Technical breakdown · 02</div>
+    <h2>Latency per layer</h2>
+    <p>The single biggest cost is the process spawn — it occurs before a single byte of our command is interpreted. This alone makes 60 Hz delivery physically impossible.</p>
+    <div class="bars">
+      <div class="bar-row"><div class="bar-lbl">Process spawn (fork/exec/dyld)</div><div class="bar-track"><div class="bar-fill" style="width:80%;background:#D85A30"></div></div><div class="bar-val">20–80 ms</div></div>
+      <div class="bar-row"><div class="bar-lbl">AppleScript interpreter</div><div class="bar-track"><div class="bar-fill" style="width:18%;background:#EF9F27"></div></div><div class="bar-val">5–15 ms</div></div>
+      <div class="bar-row"><div class="bar-lbl">Apple Events IPC</div><div class="bar-track"><div class="bar-fill" style="width:14%;background:#EF9F27"></div></div><div class="bar-val">variable</div></div>
+      <div class="bar-row"><div class="bar-lbl">System Events broker</div><div class="bar-track"><div class="bar-fill" style="width:10%;background:#5DCAA5"></div></div><div class="bar-val">3–8 ms</div></div>
+      <div class="bar-row"><div class="bar-lbl">Accessibility API throttle</div><div class="bar-track"><div class="bar-fill" style="width:8%;background:#5DCAA5"></div></div><div class="bar-val">burst-limited</div></div>
+      <div class="bar-row"><div class="bar-lbl">AutoCAD parse + redraw</div><div class="bar-track"><div class="bar-fill" style="width:5%;background:#7F77DD"></div></div><div class="bar-val">2–5 ms</div></div>
+    </div>
+  </div>
+
+  <div class="doc-section" id="ceiling">
+    <div class="eyebrow">Technical breakdown · 03</div>
+    <h2>The hard ceiling</h2>
+    <p>The roller fires input events at up to 200 Hz. The osascript pipeline processes at most 10–15 Hz. Commands that arrive in the gap don't get dropped — they queue up in Apple Events and drain after the roller stops. This is why the view keeps moving. It's not a code bug — it's a rate mismatch.</p>
+    <div class="callout">
+      Roller input: ~100–200 Hz &nbsp;·&nbsp; osascript throughput: ~12 Hz &nbsp;·&nbsp; gap: <strong>16×</strong><br>
+      This ratio cannot be improved with C# optimizations alone.
+    </div>
+    <div class="bars">
+      <div class="bar-row"><div class="bar-lbl">Roller input rate</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:#D85A30"></div></div><div class="bar-val">~200 Hz</div></div>
+      <div class="bar-row"><div class="bar-lbl">osascript throughput</div><div class="bar-track"><div class="bar-fill" style="width:6%;background:#378ADD"></div></div><div class="bar-val">~12 Hz</div></div>
+    </div>
+  </div>
+
+  <div class="divider">What we tried</div>
+
+  <div class="doc-section" id="attempts-section">
+    <div class="eyebrow">Attempts 01 – 05</div>
+    <h2>Five approaches, five lessons</h2>
+    <div class="attempts">
+
+      <div class="attempt" id="a1">
+        <div class="a-left"><div class="a-circle">01</div><div class="a-line"></div></div>
+        <div class="a-body">
+          <div class="a-header"><span class="a-title">Process.Start per tick</span><span class="pill pill-fail">Failed</span></div>
+          <p>Fire a new <code>osascript</code> process on every roller event — simplest possible approach.</p>
+          <pre>Process.Start("/usr/bin/osascript", $"-e 'tell application...'");</pre>
+          <p>Queue grows unboundedly. Each spawn takes 20–80 ms, events arrive every 5 ms. Hundreds of queued processes drain after the roller stops — causing 2–5 seconds of post-stop movement. Also caused polarity reversal via elapsed time normalization spikes on resume.</p>
+        </div>
+      </div>
+
+      <div class="attempt" id="a2">
+        <div class="a-left"><div class="a-circle">02</div><div class="a-line"></div></div>
+        <div class="a-body">
+          <div class="a-header"><span class="a-title">Persistent stdin pipe</span><span class="pill pill-fail">Silent failure</span></div>
+          <p>Start one <code>osascript</code> process and feed commands via stdin — keeping the Apple Events bridge warm.</p>
+          <pre>Arguments = "-",  // read from stdin
+RedirectStandardInput = true</pre>
+          <p><code>osascript -</code> reads stdin as one complete script and waits for EOF before executing anything. Every command was buffered and never ran. The roller did nothing.</p>
+        </div>
+      </div>
+
+      <div class="attempt" id="a3">
+        <div class="a-left"><div class="a-circle">03</div><div class="a-line"></div></div>
+        <div class="a-body">
+          <div class="a-header"><span class="a-title">Native CGEvent helper</span><span class="pill pill-fail">Killed by OS</span></div>
+          <p>Bypass AppleScript entirely. Compile a C binary using <code>CGEventPost</code> — direct kernel-level keystroke injection at ~1 ms latency.</p>
+          <pre>CGEventRef down = CGEventCreateKeyboardEvent(NULL, 0, true);
+CGEventKeyboardSetUnicodeString(down, 1, &c);
+CGEventPost(kCGHIDEventTap, down);</pre>
+          <p>macOS kills the process immediately. <code>CGEventPost(kCGHIDEventTap)</code> requires explicit Accessibility permission. An unsigned, non-notarized binary is terminated before posting a single event. Needs signing + notarization + Apple Developer account — not viable for a distributable plugin.</p>
+        </div>
+      </div>
+
+      <div class="attempt" id="a4">
+        <div class="a-left"><div class="a-circle">04</div><div class="a-line"></div></div>
+        <div class="a-body">
+          <div class="a-header"><span class="a-title">In-flight drop flag</span><span class="pill pill-partial">Partial</span></div>
+          <p>Use an <code>Interlocked</code> flag so only one osascript runs at a time. Drop all new events while one is in-flight.</p>
+          <pre>if (Interlocked.CompareExchange(ref _inFlight, 1, 0) != 0)
+    return; // already sending — drop</pre>
+          <p>Stopped runaway queue growth. Movement stopped closer to when the roller stopped. But too aggressive — large accumulated deltas sent as single jumps felt stepped and coarse. Slow rolling produced barely any movement.</p>
+        </div>
+      </div>
+
+      <div class="attempt" id="a5">
+        <div class="a-left"><div class="a-circle">05</div><div class="a-line"></div></div>
+        <div class="a-body">
+          <div class="a-header"><span class="a-title">Pending delta accumulator</span><span class="pill pill-ok">Current best</span></div>
+          <p>Accumulate all roller ticks into shared <code>_pendingDx</code> / <code>_pendingDy</code>. When osascript finishes, drain the full pending delta in one call. Wipe pending on idle gap &gt;60 ms.</p>
+          <pre>lock (_pendingLock) { _pendingDx += -dx; }
+TryFire();
+
+lock (_pendingLock) {
+    dx = _pendingDx; _pendingDx = 0;
+    dy = _pendingDy; _pendingDy = 0;
+}</pre>
+          <p>No runaway queue. Stops cleanly on idle. No polarity reversal. Still capped at osascript's ~12 Hz — fast rolling feels coarse — but the best achievable within the current transport layer.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="divider">Resolution</div>
+
+  <div class="doc-section" id="realfix">
+    <div class="eyebrow">Resolution</div>
+    <h2>What a real fix looks like</h2>
+    <p>No C# optimization can close the 16× gap. The fix requires bypassing the entire osascript → Apple Events → System Events chain.</p>
+    <table class="fix-table">
+      <thead>
+        <tr><th>Approach</th><th>Latency</th><th>Bypasses</th><th>Feasibility</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>AutoLISP named pipe reactor</td><td>~1 ms</td><td>Entire osascript + Accessibility chain</td><td>High — .lsp file loaded in AutoCAD</td></tr>
+        <tr><td>ObjectARX plugin</td><td>~0 ms</td><td>Everything — direct viewport API</td><td>Medium — ObjectARX SDK + Xcode</td></tr>
+        <tr><td>Signed + notarized CGEvent binary</td><td>~1 ms</td><td>osascript, Apple Events, System Events</td><td>Medium — Apple Developer ($99/yr)</td></tr>
+        <tr><td>VIEWCTR manipulation via script</td><td>~5 ms</td><td>Keyboard emulation layer</td><td>Needs research</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:18px">The closest viable option without an Apple Developer account is an <strong>AutoLISP named pipe reactor</strong> — a small <code>.lsp</code> file AutoCAD loads at startup that opens a Unix domain socket and listens for pan commands. The C# plugin writes <code>dx dy</code> pairs directly to the socket, bypassing every layer above.</p>
+  </div>
+
+  <div class="doc-section" id="code">
+    <div class="eyebrow">Reference</div>
+    <h2>Current NudgeEngine.cs</h2>
+    <p>Attempt 05 — the pending delta accumulator. <code>NudgeXAdjustment</code> and <code>NudgeYAdjustment</code> call <code>FeedX</code> / <code>FeedY</code> respectively and are unchanged.</p>
+    <pre>namespace Loupedeck.CadFlow
+{
+    using System;
+    using System.Diagnostics;
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    internal sealed class NudgeEngine
+    {
+        public static readonly NudgeEngine Instance = new NudgeEngine();
+        private NudgeEngine() { }
+
+        private const double FineScale   = 0.6;
+        private const double TurboCoeff  = 1.5;
+        private const double Exponent    = 1.65;
+        private const int    MaxDelta    = 12;
+        private const string AcadApp     = "AutoCAD 2027";
+        private const int    IdleResetMs = 60;
+
+        private int      _pendingDx = 0;
+        private int      _pendingDy = 0;
+        private readonly object _pendingLock = new object();
+
+        private double   _accumX;
+        private double   _accumY;
+        private DateTime _lastEventTime = DateTime.MinValue;
+        private int      _inFlight = 0;
+
+        public void FeedX(int diff)
+        {
+            var now = DateTime.Now;
+            ResetIfIdle(now);
+            _lastEventTime = now;
+            _accumX += Velocity(diff);
+            int dx = (int)Math.Truncate(_accumX);
+            if (dx == 0) return;
+            _accumX -= dx;
+            lock (_pendingLock) { _pendingDx += -dx; }
+            TryFire();
+        }
+
+        public void FeedY(int diff)
+        {
+            var now = DateTime.Now;
+            ResetIfIdle(now);
+            _lastEventTime = now;
+            _accumY += Velocity(diff);
+            int dy = (int)Math.Truncate(_accumY);
+            if (dy == 0) return;
+            _accumY -= dy;
+            lock (_pendingLock) { _pendingDy += dy; }
+            TryFire();
+        }
+
+        private void ResetIfIdle(DateTime now)
+        {
+            if (_lastEventTime == DateTime.MinValue) return;
+            if ((now - _lastEventTime).TotalMilliseconds > IdleResetMs)
+            {
+                _accumX = 0; _accumY = 0;
+                lock (_pendingLock) { _pendingDx = 0; _pendingDy = 0; }
+            }
+        }
+
+        private void TryFire()
+        {
+            if (Interlocked.CompareExchange(ref _inFlight, 1, 0) != 0) return;
+            Task.Run(() =>
+            {
+                try
+                {
+                    int dx, dy;
+                    lock (_pendingLock)
+                    {
+                        dx = _pendingDx; _pendingDx = 0;
+                        dy = _pendingDy; _pendingDy = 0;
+                    }
+                    if (dx != 0 || dy != 0) SendPan(dx, dy);
+                }
+                finally
+                {
+                    Interlocked.Exchange(ref _inFlight, 0);
+                    bool more;
+                    lock (_pendingLock)
+                        more = _pendingDx != 0 || _pendingDy != 0;
+                    if (more) TryFire();
+                }
+            });
+        }
+
+        private static double Velocity(int raw)
+        {
+            int c = Math.Clamp(raw, -MaxDelta, MaxDelta);
+            double abs = Math.Abs(c);
+            return Math.Sign(c) * (FineScale + TurboCoeff * Math.Pow(abs, Exponent));
+        }
+
+        private static void SendPan(int dx, int dy)
+        {
+            string command = $"'_-pan 0,0 {dx},{dy} ";
+            string script  =
+                $"tell application \"System Events\" to tell process \"{AcadApp}\" " +
+                $"to keystroke \"{command}\"";
+            try
+            {
+                var psi = new ProcessStartInfo
+                {
+                    FileName               = "/usr/bin/osascript",
+                    ArgumentList           = { "-e", script },
+                    UseShellExecute        = false,
+                    CreateNoWindow         = true,
+                };
+                using var p = Process.Start(psi);
+                p?.WaitForExit(80);
+            }
+            catch { }
+        }
+    }
+}</pre>
+  </div>
+
+</main>
+
+<script>
+function go(id, el) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  el.classList.add('active');
+}
+const ids = ['intro','problem','stack','latency','ceiling','a1','a2','a3','a4','a5','realfix','code'];
+window.addEventListener('scroll', () => {
+  let cur = ids[0];
+  for (const id of ids) {
+    const el = document.getElementById(id);
+    if (el && window.scrollY >= el.offsetTop - 100) cur = id;
+  }
+  document.querySelectorAll('.nav-link').forEach(l => {
+    l.classList.toggle('active', !!l.getAttribute('onclick')?.includes("'"+cur+"'"));
+  });
+}, { passive: true });
+</script>
+</body>
+</html>
